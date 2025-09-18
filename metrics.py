@@ -75,6 +75,11 @@ def convertSpeed(values):
     speed_mph = speed_kmh / 1.609
     return speed_mph
 
+def calculateBoost(values):
+    intake_pressure = values[0]
+    barometric_pressure = values[1]
+    return intake_pressure - barometric_pressure
+
 our_metrics = {
     "Engine_Load": Metric("Engine Load", "%", None, [obd.commands.ENGINE_LOAD]),
     "Coolant_Temp": Metric("Coolant Temp", "°C", None, [obd.commands.COOLANT_TEMP]),
@@ -82,7 +87,7 @@ our_metrics = {
     "Intake_Pressure": Metric("Intake Pressure", "kPa", None, [obd.commands.INTAKE_PRESSURE]),
     "RPM": Metric("RPM", "rpm", None, [obd.commands.RPM]),
     "Speed": Metric("Speed kmh", "km/h", None, [obd.commands.SPEED]),
-    "Speed2": Metric("Speed mph", "mph", convertSpeed, [obd.commands.SPEED]),
+    "Speed_mph": Metric("Speed mph", "mph", convertSpeed, [obd.commands.SPEED]),
     "Intake_Temp": Metric("Intake Temp", "°C", None, [obd.commands.INTAKE_TEMP]),
     "MAF": Metric("Mass Air Flow", "g/s", None, [obd.commands.MAF]),
     "Throttle_Pos": Metric("Throttle Position", "%", None, [obd.commands.THROTTLE_POS]),
@@ -99,4 +104,5 @@ our_metrics = {
     "Oil_Temp": Metric("Oil Temperature", "°C", None, [obd.commands.OIL_TEMP]),
     "Fuel_Inject_Timing": Metric("Fuel Injection Timing", "°", None, [obd.commands.FUEL_INJECT_TIMING]),
     "Fuel_Rate": Metric("Fuel Rate", "L/h", None, [obd.commands.FUEL_RATE]),
+    "Boost": Metric("Boost", "kPa", calculateBoost, [ obd.commands.INTAKE_PRESSURE, obd.commands.BAROMETRIC_PRESSURE]),
 }

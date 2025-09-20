@@ -12,7 +12,7 @@ class DisplayController:
         self.RST = 25
         self.WIDTH = 128 + 4
         self.HEIGHT = 160
-        self.ROTATION = 0
+        self.ROTATION = 90
         self.INVERT = False
         self.BGR = False
         

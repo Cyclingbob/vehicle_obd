@@ -80,6 +80,38 @@ def calculateBoost(values):
     barometric_pressure = values[1]
     return intake_pressure - barometric_pressure
 
+## TORQUE
+def convertTorquePercent(messages): #handle bytes from car for torque % mode 01 pid 62
+    d = messages[0].data
+    d = d[2:]
+    v = obd.utils.bytes_to_int(d)
+    return (v - 125) * obd.Unit.PERCENT
+
+def convertTorqueReference(messages): #handle bytes from car for torque reference mode 01 pid 63
+    d = messages[0].data
+    d = d[2:]
+    v = obd.utils.bytes_to_int(d)
+    return v * obd.Unit.NEWTON_METER
+
+def calculateActualTorque(values):
+    torque_percent = values[0]
+    torque_reference = values[1]
+    return (torque_percent / 100) * torque_reference
+
+torquePercentCommand = obd.OBDCommand("Torque", "Actual Torque Percentage", b"0162", 3, convertTorquePercent)
+torqueRerferenceCommand = obd.OBDCommand("Torque", "Calculated Torque", b"0163", 4, convertTorqueReference)
+
+## POWER
+
+def calculatePower(values):
+    torque_percent = values[0]
+    torque_reference = values[1]
+    torque = calculateActualTorque([ torque_percent, torque_reference])
+    rpm = values[2]
+    return (torque * rpm) / 9549  # Power = Torque * RPM / 9549
+
+## METRICS
+
 our_metrics = {
     "Engine_Load": Metric("Engine Load", "%", None, [obd.commands.ENGINE_LOAD]),
     "Coolant_Temp": Metric("Coolant Temp", "°C", None, [obd.commands.COOLANT_TEMP]),
@@ -105,4 +137,6 @@ our_metrics = {
     "Fuel_Inject_Timing": Metric("Fuel Injection Timing", "°", None, [obd.commands.FUEL_INJECT_TIMING]),
     "Fuel_Rate": Metric("Fuel Rate", "L/h", None, [obd.commands.FUEL_RATE]),
     "Boost": Metric("Boost", "kPa", calculateBoost, [ obd.commands.INTAKE_PRESSURE, obd.commands.BAROMETRIC_PRESSURE]),
+    "Torque": Metric("Torque", "N/m", calculateActualTorque, [ torquePercentCommand, torqueRerferenceCommand ]),
+    "Power": Metric("Power", "kW", calculatePower, [ torquePercentCommand, torqueRerferenceCommand, obd.commands.RPM ]), # Power = Torque * RPM / 9549
 }

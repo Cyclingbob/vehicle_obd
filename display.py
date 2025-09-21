@@ -43,7 +43,7 @@ class VirtualLED(Widget):
         draw_obj.ellipse((self.x0, self.y0, self.x1, self.y1), outline=None, fill=self.colour)
 
 class CircularGauge(Widget):
-    def __init__(self, center, radius_outer=60, radius_inner=40, low=0, high=100, label_values=None, label_text=None, color=(255, 0, 0)):
+    def __init__(self, center, fontFile, radius_outer=60, radius_inner=40, low=0, high=100, label_values=None, label_text=None, color=(255, 0, 0)):
         self.center = center
         self.r_outer = radius_outer
         self.r_inner = radius_inner
@@ -53,6 +53,7 @@ class CircularGauge(Widget):
         self.needle_color = color
         self.label_values = label_values or []
         self.label_text = label_text or []
+        self.font = ImageFont.truetype(fontFile, math.floor(0.5 * radius_inner))
 
     def value_to_angle(self, value):
         ANGLE_START = 225
@@ -79,24 +80,24 @@ class CircularGauge(Widget):
         draw_obj.line([(start_x, start_y), (end_x, end_y)], fill=self.needle_color, width=10)
 
         # Labels
-        NUMBER_POS_RADIUS = 50
+        NUMBER_POS_RADIUS = self.r_outer + 8
         for v, text in zip(self.label_values, self.label_text):
             angle = self.value_to_angle(v)
             rad = math.radians(angle)
             lx = x + NUMBER_POS_RADIUS * math.cos(rad)
             ly = y - NUMBER_POS_RADIUS * math.sin(rad)
-            w, h = draw_obj.textbbox((0, 0), text)[2:]
-            draw_obj.text((lx - w / 2, ly - h / 2), text, fill=(0, 0, 0))
+            w, h = draw_obj.textbbox((0, 0), text, font=self.font)[2:]
+            draw_obj.text((lx - w / 2, ly - h / 2), text, fill=(0, 255, 0), font=self.font)
 
 class DisplayController:
-    def __init__(self):
+    def __init__(self, rotation=90):
         # Display Configuration
         self.SPI_BUS = 0
         self.CS = 0
         self.DC = 24
         self.BACKLIGHT = 22
         self.RST = 25
-        self.ROTATION = 270
+        self.ROTATION = rotation
 
         if self.ROTATION in (90, 270):
             self.WIDTH, self.HEIGHT = 160, 128
@@ -106,18 +107,8 @@ class DisplayController:
         self.INVERT = False
         self.BGR = False
         
-        # Colors
+        # Colours
         self.BACKGROUND = (0, 0, 0)
-        self.CIRCULAR_DIAL_EXTERIOR_BACKGROUND = (200, 200, 200)
-        self.CIRCULAR_DIAL_INTERIOR_BACKGROUND = (0, 0, 0)
-        self.NEEDLE_COLOUR = (255, 0, 0)
-        
-        # Fonts
-        self.SMALL_FONT_NAME = "Inter_18pt-Medium.ttf"
-        self.SMALL_FONT = ImageFont.truetype(self.SMALL_FONT_NAME, 14)
-        self.FONT_NAME = "Inter_24pt-Black.ttf"
-        self.STANDARD_FONT = ImageFont.truetype(self.FONT_NAME, 28)
-        self.MIDDLE_FONT = ImageFont.truetype(self.FONT_NAME, 22)
 
         if(self.ROTATION in (90, 270)):
             # Initialize Display

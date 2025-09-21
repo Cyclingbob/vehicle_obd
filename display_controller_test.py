@@ -1,14 +1,9 @@
 from display import DisplayController, TextWidget, VirtualLED, CircularGauge
 from PIL import ImageFont
 from time import sleep
+from random import randint
 
 display = DisplayController()
-
-label_values = [0, 2500, 5000, 7500, 10000]
-label_text = ["0", "2.5", "5", "7.5", "10"]
-low = 0
-high = 10000
-value = 5600
 
 fontAFile = "Inter_18pt-Medium.ttf"
 fontA = ImageFont.truetype(fontAFile, 14)
@@ -26,12 +21,32 @@ display.clear_display()
 # display.setLowerValue(value)
 # display.setMiddleValue(value)
 
-gauge = CircularGauge(center=display.CENTER, low=0, high=100, label_values=[0,50,100], label_text=["0","50","100"])
-display.add_widget(gauge)
+gauge = CircularGauge(center=(40, 90), low=0, high=100,
+                      label_values=[0, 25, 50, 75, 100], label_text=["0", "25", "50", "75", "100"],
+                      fontFile=fontAFile, radius_outer=30, radius_inner=20)
+#display.add_widget(gauge)
+
+metric1 = TextWidget((20, 20), fontA, (255, 255, 255))
+metric2 = TextWidget((20, 40), fontA, (255, 255, 255))
+metric3 = TextWidget((20, 60), fontA, (255, 255, 255))
+
+metric1.text = "Oil temp: 56°C"
+metric2.text = "RPM: 1500rpm"
+metric3.text = "Fuel_level: 75%"
+
+display.add_widget(metric1)
+display.add_widget(metric2)
+display.add_widget(metric3)
+
 
 while True:
-    for led_color in [(255, 0, 0), (0, 255, 0), (0, 0, 255)]:
-        elm_led.setColour(led_color)
-        #display.clear_display()
-        sleep(1)
-        display.refresh()
+    sleep(5)
+    metric1.text = "Oil temp: " + str(randint(20, 120)) + "°C"
+    metric2.text = "RPM: " + str(randint(800, 4000)) + "rpm"
+    metric3.text = "Fuel_level: " + str(randint(0, 100)) + "%"
+    display.refresh()
+    # for led_color in [(255, 0, 0), (0, 255, 0), (0, 0, 255)]:
+    #     elm_led.setColour(led_color)
+    #     #display.clear_display()
+    #     sleep(1)
+    #     display.refresh()

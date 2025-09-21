@@ -69,16 +69,13 @@ class Vehicle():
         self.ELM_connected = False
         self.connection_count = 0
     def connect(self):
-        # self.connection_count = self.connection_count + 1
-        # if(self.connection_count <= reconnect_attempts):
         self.connection = obd.Async()
         connection_status = self.connection.status()
 
         self.ELM_connected = not connection_status == obd.OBDStatus.NOT_CONNECTED
         if not self.connection.is_connected():
-            # self.connect()
             self.connected = False
-            print("OBD connection failed.")
+            #print("OBD connection failed.")
             return False
         else:
             self.connected = True
@@ -88,13 +85,6 @@ class Vehicle():
             self.start()
             self.getSupportedCommands()
             return True
-        # else:
-        #     print("OBD connection failed.")
-        #     return False
-    # def findMutualCommands(self):
-    #     for supported_PID in self.supported_PIDs:
-    #         if str(supported_PID) in self.commands_we_support:
-    #             self.mutual_PIDS.append(supported_PID)
 
     def findMutualMetrics(self):
         supported_commands = set(self.mutual_PIDS)
@@ -109,9 +99,7 @@ class Vehicle():
         time.sleep(2)
         command1 = obd.commands.PIDS_A
         response1 = self.query(command1)
-        # print(self.connection.query())
         bit_array1 = list(response1.value)
-        # print(commands)
 
         PIDS_A = commands.decode_bit_array(bit_array1)
         PIDS_A = commands.adjust_supported_bit_array(PIDS_A, 0x01)
@@ -158,4 +146,6 @@ class Vehicle():
     def query(self, command):
         if command in self.watched_commands:
             result = self.connection.query(command)
-            return result
+            return result   
+    def get_supported_pids(self):
+        return self.supported_PIDs

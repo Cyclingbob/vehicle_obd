@@ -10,7 +10,7 @@ from getIPs import getIPs
 import copy
 import time
 
-display = DisplayController()
+display = DisplayController(90)
 
 fontAFile = "Inter_18pt-Medium.ttf"
 fontA = ImageFont.truetype(fontAFile, 14)

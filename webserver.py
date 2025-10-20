@@ -1,5 +1,6 @@
 from flask import Flask, render_template_string, request, redirect, url_for
 from config import watched_metrics_file
+from metrics import our_metrics
 
 app = Flask(__name__)
 
@@ -17,32 +18,41 @@ def save_watched_metrics(metrics):
     with open(watched_metrics_file, "w") as f:
         f.write("\n".join(metrics))
 
+def getAllMetrics():
+    return sorted(list(our_metrics.keys()))
+
 @app.route("/")
 def index():
+    all_metrics = sorted(getAllMetrics())
     html = """
     <h1>OBD2 Display Controller</h1>
-    <h3>Currently Watched Metrics:</h3>
-    <ul>
-    {% for metric in watched %}
-        <li>{{ metric }}</li>
-    {% endfor %}
-    </ul>
 
     <form action="/update" method="post">
-        <label for="metrics">Enter metrics (comma separated):</label><br>
-        <input type="text" id="metrics" name="metrics" value="{{ ','.join(watched) }}">
-        <br><br>
+        <h3>Select Metrics to Display:</h3>
+        <div style="column-count: 3;">
+        {% for metric in all_metrics %}
+            <label>
+                <input type="checkbox" name="metrics" value="{{ metric }}"
+                    {% if metric in watched %}checked{% endif %}>
+                {{ metric }}
+            </label><br>
+        {% endfor %}
+        </div>
+        <br>
         <input type="submit" value="Update">
     </form>
     """
-    return render_template_string(html, watched=watched_metrics_names)
+    return render_template_string(html,
+                                  watched=watched_metrics_names,
+                                  all_metrics=all_metrics)
 
 @app.route("/update", methods=["POST"])
 def update():
     global watched_metrics_names
-    metrics_str = request.form.get("metrics", "")
-    watched_metrics_names = [m.strip() for m in metrics_str.split(",") if m.strip()]
-    save_watched_metrics(watched_metrics_names)  # persist to disk
+    # Get list of selected checkboxes
+    selected = request.form.getlist("metrics")
+    watched_metrics_names = selected
+    save_watched_metrics(selected)
     return redirect(url_for("index"))
 
 def run_webserver():

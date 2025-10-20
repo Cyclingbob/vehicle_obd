@@ -104,7 +104,7 @@ our_metrics = {
     "Run_Time": Metric("Engine Run Time", "s", None, [obd.commands.RUN_TIME], "Run Time", "Run_Time"),
     "Distance_W_MIL": Metric("Distance with MIL", "km", None, [obd.commands.DISTANCE_W_MIL], "MIL Dist", "Distance_W_MIL"),
     "Fuel_Level": Metric("Fuel Level", "%", None, [obd.commands.FUEL_LEVEL], "Fuel Level", "Fuel_Level"),
-    "Barometric_Pressure": Metric("Barometric Pressure", "kPa", None, [obd.commands.BAROMETRIC_PRESSURE], "Baro Pres" "Barometric_Pressure"),
+    "Barometric_Pressure": Metric("Barometric Pressure", "kPa", None, [obd.commands.BAROMETRIC_PRESSURE], "Baro Pres", "Barometric_Pressure"),
     "Absolute_Load": Metric("Absolute Load", "%", None, [obd.commands.ABSOLUTE_LOAD], "Abs Load", "Absolute_Load"),
     "Relative_Throttle_Pos": Metric("Relative Throttle Position", "%", None, [obd.commands.RELATIVE_THROTTLE_POS], "Rel Throt", "Relative_Throttle_Pos"),
     "Ambient_Air_Temp": Metric("Ambient Air Temp", "°C", None, [obd.commands.AMBIANT_AIR_TEMP], "Amb Temp", "Ambient_Air_Temp"),

@@ -77,7 +77,7 @@ def calculateActualTorque(values):
     return (torque_percent / 100) * torque_reference
 
 torquePercentCommand = obd.OBDCommand("Torque", "Actual Torque Percentage", b"0162", 3, convertTorquePercent)
-torqueRerferenceCommand = obd.OBDCommand("Torque", "Calculated Torque", b"0163", 4, convertTorqueReference)
+torqueReferenceCommand = obd.OBDCommand("Torque", "Calculated Torque", b"0163", 4, convertTorqueReference)
 
 ## POWER
 
@@ -115,6 +115,6 @@ our_metrics = {
     "Fuel_Inject_Timing": Metric("Fuel Injection Timing", "°", None, [obd.commands.FUEL_INJECT_TIMING], "Inj time", "Fuel_Inject_Timing"),
     "Fuel_Rate": Metric("Fuel Rate", "L/h", None, [obd.commands.FUEL_RATE], "Fuel Rate", "Fuel_Rate"),
     "Boost": Metric("Boost", "kPa", calculateBoost, [ obd.commands.INTAKE_PRESSURE, obd.commands.BAROMETRIC_PRESSURE], "Boost", "Boost"),
-    "Torque": Metric("Torque", "N/m", calculateActualTorque, [ torquePercentCommand, torqueRerferenceCommand ], "Torque", "Torque"),
-    "Power": Metric("Power", "kW", calculatePower, [ torquePercentCommand, torqueRerferenceCommand, obd.commands.RPM ], "Power", "Power"), # Power = Torque * RPM / 9549
+    "Torque": Metric("Torque", "N/m", calculateActualTorque, [ torquePercentCommand, torqueReferenceCommand ], "Torque", "Torque"),
+    "Power": Metric("Power", "kW", calculatePower, [ torquePercentCommand, torqueReferenceCommand, obd.commands.RPM ], "Power", "Power"), # Power = Torque * RPM / 9549
 }

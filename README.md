@@ -7,6 +7,8 @@ A 1.8" SPI display 128x160 ST3577s has been used.
 Tested on Raspberry Pi Zero 2W running Raspberry Pi issued Debian 11.3
 Python 3 used to execute program
 
+## Dev branch contains an unstable but much newer version of code. Once this has been adequately tested, this will be merged into main. Use `git checkout dev` to change between branches after you've cloned this repository.
+
 ## Virtual Environment
 Due to frustrating changes with newer versions of debian, you may need to use virtual environments to correctly run the program
 `cd vehicle_obd`, then `python -m venv obd_venv`, then `source obd_venv/bin/activate`.

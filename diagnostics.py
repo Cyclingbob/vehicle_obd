@@ -137,12 +137,19 @@ class Vehicle():
 
     def watchCommand(self, command: obd.OBDCommand):
         if command not in self.watched_commands:  # Avoid duplicates
-            self.watched_commands.append(command) 
-        if self.connection.running:
-            self.connection.stop()
+            self.watched_commands.append(command)
+
+        # cannot watch new commands whilst the async loop is running.
+        was_running = self.connection.running
+        self.connection.stop()
         self.connection.watch(command)
+        if was_running:
+            self.connection.start()
+
     def start(self):
-        self.connection.start()
+        self.connection.start() #start the async connection loop
+    def stop(self):
+        self.connection.stop()
     def query(self, command):
         if command in self.watched_commands:
             result = self.connection.query(command)

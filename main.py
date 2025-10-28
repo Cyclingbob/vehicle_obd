@@ -110,10 +110,6 @@ for metric in watched_metrics:
 
 vehicle.start()
 
-def getVehicle():
-    global vehicle
-    return vehicle
-
 while True:
 
     watched_metrics_names = get_watched_metrics_names()
@@ -121,18 +117,6 @@ while True:
 
     display.clear_display()
     display.widgets = []
-
-    # time.sleep()
-    #value1 = watched_metrics[0].getValue()
-    #value2 = watched_metrics[1].getValue()
-    #value3 = watched_metrics[2].getValue()
-
-    # label_values = [0, 2500, 5000, 7500, 10000]
-    # label_text = ["0", "2.5", "5", "7.5", "10"]
-    # low = 0
-    # high = 10000
-
-    # display.setNeedle(label_values, label_text, low, high, value1)
 
     elm_led = VirtualLED((5, 5), (255, 0, 0), 3)
     car_led = VirtualLED((15, 5), (255, 0, 0), 3) # vehicle status LED (disconnected)

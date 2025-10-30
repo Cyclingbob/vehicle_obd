@@ -29,22 +29,24 @@ def refresh_watched_metrics():
     to the currently selected watched_metrics_names (dictionary keys).
     """
     global watched_metrics
-    global watched_metrics_names
+    # global watched_metrics_names
+    names = get_watched_metrics_names() or []
 
-    metrics_lock = threading.Lock()
-    with metrics_lock:
-        watched_metrics_names = get_watched_metrics_names()
+    # metrics_lock = threading.Lock()
+    # with metrics_lock:
+    #     watched_metrics_names = get_watched_metrics_names()
 
     watched_metrics = []
 
-    if vehicle.connected:
-        for metric_name in watched_metrics_names:
-            if metric_name in our_metrics:
-                got_metric = copy.deepcopy(our_metrics[metric_name])
-                got_metric.setVehicle(vehicle)
-                watched_metrics.append(got_metric)
-    else:
-        print("Unable to refresh watched metrics as vehicle is not connected (vehicle.connected)")
+    # if vehicle.connected:
+    # for metric_name in watched_metrics_names:
+    for metric_name in names:
+        if metric_name in our_metrics:
+            got_metric = copy.deepcopy(our_metrics[metric_name])
+            got_metric.setVehicle(vehicle)
+            watched_metrics.append(got_metric)
+    # else:
+        # print("Unable to refresh watched metrics as vehicle is not connected (vehicle.connected)")
 
 threading.Thread(target=run_webserver, daemon=True).start()
 refresh_watched_metrics()
@@ -109,11 +111,11 @@ while not success: # while it is failing
 
 active_watched_metrics = []
 
-# for metric in watched_metrics:
-#     got_metric = copy.deepcopy(our_metrics[metric.getKey()]) # don't affect our_metrics in metrics.py
-#     got_metric.setVehicle(vehicle) # So it knows where to send commands
-#     # got_metric.startWatching() # Subscribe
-#     active_watched_metrics.append(got_metric)
+for metric in watched_metrics:
+    got_metric = copy.deepcopy(our_metrics[metric.getKey()]) # don't affect our_metrics in metrics.py
+    got_metric.setVehicle(vehicle) # So it knows where to send commands
+    # got_metric.startWatching() # Subscribe
+    active_watched_metrics.append(got_metric)
 
 vehicle.start()
 

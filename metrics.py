@@ -33,7 +33,7 @@ class Metric():
     def startWatching(self):
         for command in self.commands:
             self.vehicle.watchCommand(command)
-            print(self.vehicle.watched_commands)
+            #print(self.vehicle.watched_commands)
         self.watching = True
 
     def getUnit(self):

@@ -97,43 +97,48 @@ class Vehicle():
 
     def getSupportedCommands(self):
         time.sleep(2)
-        command1 = obd.commands.PIDS_A
-        response1 = self.query(command1)
-        bit_array1 = list(response1.value)
 
-        PIDS_A = commands.decode_bit_array(bit_array1)
-        PIDS_A = commands.adjust_supported_bit_array(PIDS_A, 0x01)
-        self.supported_PIDs = [ *PIDS_A ]
+        try:
+            command1 = obd.commands.PIDS_A
+            response1 = self.connection.query(command1)
+            bit_array1 = list(response1.value)
 
-        PIDS_B_cmd = 32
-        if PIDS_B_cmd in PIDS_A: #If it supports PID
-            command2 = obd.commands.PIDS_B
-            response2 = self.connection.query(command2)
-            bit_array2 = list(response2.value)
+            PIDS_A = commands.decode_bit_array(bit_array1)
+            PIDS_A = commands.adjust_supported_bit_array(PIDS_A, 0x01)
+            self.supported_PIDs = [ *PIDS_A ]
 
-            PIDS_B = commands.decode_bit_array(bit_array2)
-            PIDS_B = commands.adjust_supported_bit_array(bit_array2, 0x21)
-            self.supported_PIDs = [ *self.supported_PIDs, *PIDS_B ]
+            PIDS_B_cmd = 32
+            if PIDS_B_cmd in PIDS_A: #If it supports PID
+                command2 = obd.commands.PIDS_B
+                response2 = self.connection.query(command2)
+                bit_array2 = list(response2.value)
 
-            PIDS_C_cmd = 64
-            if PIDS_C_cmd in PIDS_B: #If it supports PID
-                command3 = obd.commands.PIDS_C
-                response3 = self.connection.query(command3)
-                bit_array3 = list(response3.value)
+                PIDS_B = commands.decode_bit_array(bit_array2)
+                PIDS_B = commands.adjust_supported_bit_array(PIDS_B, 0x21)
+                self.supported_PIDs = [ *self.supported_PIDs, *PIDS_B ]
 
-                PIDS_C = commands.decode_bit_array(bit_array3)
-                PIDS_C = commands.adjust_supported_bit_array(bit_array3, 0x41)
-                self.supported_PIDs = [ *self.supported_PIDs, *PIDS_C ]
+                PIDS_C_cmd = 64
+                if PIDS_C_cmd in PIDS_B: #If it supports PID
+                    command3 = obd.commands.PIDS_C
+                    response3 = self.connection.query(command3)
+                    bit_array3 = list(response3.value)
 
-                PIDS_D_cmd = 96
-                if PIDS_D_cmd in PIDS_C: #If it supports PID
-                    command4 = obd.OBDCommand("PIDS_D", "Supported PIDs D", b"0160", 6, pid)
-                    response4 = self.connection.query(command4)
-                    bit_array4 = list(response4.value)
+                    PIDS_C = commands.decode_bit_array(bit_array3)
+                    PIDS_C = commands.adjust_supported_bit_array(PIDS_C, 0x41)
+                    self.supported_PIDs = [ *self.supported_PIDs, *PIDS_C ]
 
-                    PIDS_D = commands.decode_bit_array(bit_array4)
-                    PIDS_D = commands.adjust_supported_bit_array(bit_array4, 0x61)
-                    self.supported_PIDs = [ *self.supported_PIDs, *PIDS_D ]
+                    PIDS_D_cmd = 96
+                    if PIDS_D_cmd in PIDS_C: #If it supports PID
+                        command4 = obd.OBDCommand("PIDS_D", "Supported PIDs D", b"0160", 6, pid)
+                        response4 = self.connection.query(command4)
+                        bit_array4 = list(response4.value)
+
+                        PIDS_D = commands.decode_bit_array(bit_array4)
+                        PIDS_D = commands.adjust_supported_bit_array(PIDS_D, 0x61)
+                        self.supported_PIDs = [ *self.supported_PIDs, *PIDS_D ]
+        except Exception as e:
+            print(f"Error getting support commands: {e}")
+            self.supported_PIDs = [];
 
     def watchCommand(self, command: obd.OBDCommand):
         if command not in self.watched_commands:  # Avoid duplicates
@@ -150,9 +155,5 @@ class Vehicle():
         self.connection.start() #start the async connection loop
     def stop(self):
         self.connection.stop()
-    def query(self, command):
-        if command in self.watched_commands:
-            result = self.connection.query(command)
-            return result   
     def get_supported_pids(self):
         return self.supported_PIDs

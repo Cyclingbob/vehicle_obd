@@ -45,10 +45,13 @@ def refresh_watched_metrics():
             got_metric = copy.deepcopy(our_metrics[metric_name])
             got_metric.setVehicle(vehicle)
             watched_metrics.append(got_metric)
+        else:
+            print(f"Metric '{metric_name}' not found in our_metrics.")
     # else:
         # print("Unable to refresh watched metrics as vehicle is not connected (vehicle.connected)")
 
 threading.Thread(target=run_webserver, daemon=True).start()
+time.sleep(0.5) # Essential for web server to start and watched_metrics to not be empty.
 refresh_watched_metrics()
 
 success = False

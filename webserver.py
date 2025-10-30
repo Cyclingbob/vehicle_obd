@@ -10,7 +10,7 @@ watched_metrics_names = []
 def load_watched_metrics():
     try:
         with open(watched_metrics_file, "r") as f:
-            return [m.strip() for m in f.read().splitlines() if m.strip()]
+            return [m.strip() for m in f.readlines() if m.strip()]
     except FileNotFoundError:
         return []
 

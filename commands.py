@@ -40,10 +40,12 @@ def adjust_supported_bit_array(array: list, lowest: hex) -> list:
 
     # adjusted_PIDs = []
     
-    for index in range(0, len(array), 1):
-        array[index] = array[index] + lowest
-        # adjusted_PIDs.append(array[index] + 1)
+    #for index in range(0, len(array), 1):
+        #array[index] = array[index] + lowest
+        #### adjusted_PIDs.append(array[index] + 1)
 
-    return array
+    return [ index + lowest for index in array ] # does not mutate input
+
+    # return array
 
 # def get_supported_commands()

@@ -127,15 +127,15 @@ class Vehicle():
                     PIDS_C = commands.adjust_supported_bit_array(PIDS_C, 0x41)
                     self.supported_PIDs = [ *self.supported_PIDs, *PIDS_C ]
 
-                    PIDS_D_cmd = 96
-                    if PIDS_D_cmd in PIDS_C: #If it supports PID
-                        command4 = obd.OBDCommand("PIDS_D", "Supported PIDs D", b"0160", 6, pid)
-                        response4 = self.connection.query(command4)
-                        bit_array4 = list(response4.value)
+                    # PIDS_D_cmd = 96
+                    # if PIDS_D_cmd in PIDS_C: #If it supports PID
+                    #     command4 = obd.OBDCommand("PIDS_D", "Supported PIDs D", b"0160", 6, pid)
+                    #     response4 = self.connection.query(command4)
+                    #     bit_array4 = list(response4.value)
 
-                        PIDS_D = commands.decode_bit_array(bit_array4)
-                        PIDS_D = commands.adjust_supported_bit_array(PIDS_D, 0x61)
-                        self.supported_PIDs = [ *self.supported_PIDs, *PIDS_D ]
+                    #     PIDS_D = commands.decode_bit_array(bit_array4)
+                    #     PIDS_D = commands.adjust_supported_bit_array(PIDS_D, 0x61)
+                    #     self.supported_PIDs = [ *self.supported_PIDs, *PIDS_D ]
         except Exception as e:
             print(f"Error getting support commands: {e}")
             self.supported_PIDs = [];
